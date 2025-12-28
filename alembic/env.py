@@ -7,9 +7,10 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 from app.core.db import Base
-from app.models.cable import Cable, Color, Marker, Alumoflex, Plastic, Construction, Drennage, Isolation
+from app import models #noqa
 
 from dotenv import load_dotenv
+
 
 load_dotenv('.env')
 

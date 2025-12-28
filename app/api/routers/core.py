@@ -8,7 +8,7 @@ from sqlalchemy.orm import selectinload
 
 from app.api.validators import BaseValidator, object_exist, validate_name
 from app.core.db import get_async_session
-from app.models.cable import Isolation
+from app.models import Isolation
 from app.schemas.isolation_schema import IsolationDB, IsolationBase, IsolationCreate
 # from app.schemas.core_schemas import CoreCreate, CoreDB
 

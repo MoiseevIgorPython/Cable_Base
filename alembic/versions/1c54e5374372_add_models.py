@@ -1,8 +1,8 @@
-"""add_models
+"""add models
 
-Revision ID: 0822e815ae8b
+Revision ID: 1c54e5374372
 Revises: 
-Create Date: 2025-12-23 21:59:38.000171
+Create Date: 2025-12-28 18:01:07.568823
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '0822e815ae8b'
+revision: str = '1c54e5374372'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -42,7 +42,7 @@ def upgrade() -> None:
     sa.Column('inner_diametr', sa.Float(), nullable=False),
     sa.Column('radial', sa.Float(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.CheckConstraint("core ~ '^\\d+x\\d+\\.?\\d*м$'", name='check_format_core'),
+    sa.CheckConstraint("core ~ '^\\d+x\\d+\\.?\\d*(м|ф|н|л|с|нс)$'", name='check_format_core'),
     sa.CheckConstraint('inner_diametr < outer_diametr', name='inner_smaller_outer'),
     sa.CheckConstraint('inner_diametr > 0', name='check_inner_diametr'),
     sa.CheckConstraint('radial > 0', name='check_radial'),
@@ -76,7 +76,7 @@ def upgrade() -> None:
     sa.Column('outer_diametr', sa.Float(), nullable=False),
     sa.Column('inner_diametr', sa.Float(), nullable=False),
     sa.Column('radial', sa.Float(), nullable=False),
-    sa.Column('isolation_id', sa.Integer(), nullable=True),
+    sa.Column('isolation_id', sa.Integer(), nullable=False),
     sa.Column('construction_id', sa.Integer(), nullable=False),
     sa.Column('drennage_id', sa.Integer(), nullable=False),
     sa.Column('alumoflex_id', sa.Integer(), nullable=False),
@@ -89,7 +89,7 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['alumoflex_id'], ['alumoflex.id'], name='fk_alumoflex'),
     sa.ForeignKeyConstraint(['construction_id'], ['construction.id'], name='fk_construction', ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['drennage_id'], ['drennage.id'], name='fk_drennage'),
-    sa.ForeignKeyConstraint(['isolation_id'], ['isolation.id'], name='fk_isolation', ondelete='SET NULL'),
+    sa.ForeignKeyConstraint(['isolation_id'], ['isolation.id'], name='fk_isolation', ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['marker_id'], ['marker.id'], name='fk_marker'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('article'),

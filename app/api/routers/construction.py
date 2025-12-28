@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import construction_exist, number_exist
 from app.core.db import get_async_session
-from app.models.cable import Construction
+from app.models import Construction
 from app.schemas.construction_schema import ConstructionDB, ConstructionCreate
 
 

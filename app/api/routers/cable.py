@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.validators import construction_exist
 from app.core.db import get_async_session
-from app.models.cable import Cable
+from app.models import Cable
 
 from app.schemas.cable_schema import CableDB, CableCreate
 

@@ -55,3 +55,7 @@
 #else:
 #    print(response.status_code)
 
+# from app.core.db import Base
+# from app.models.cable import Cable, Isolation
+# for i in Base.metadata.tables: 
+#     print(i)

@@ -4,8 +4,8 @@ from sqlalchemy import Float, ForeignKey, Integer, String, CheckConstraint, Uniq
 
 from sqlalchemy.orm import mapped_column, Mapped, relationship, validates
 
-from app.core.db import Base, ComponentName
-
+from app.core.db import Base
+from app.models.components import Drennage, Alumoflex, Marker, Color, Plastic
 
 class Cable(Base):
     article: Mapped[int] = mapped_column(Integer, unique=True)
@@ -46,7 +46,7 @@ class Isolation(Base):
                                                 passive_deletes=True)
 
     __table_args__ = (
-        CheckConstraint("core ~ '^\d+x\d+\.?\d*м$'", name='check_format_core'),
+        CheckConstraint("core ~ '^\\d+x\\d+\\.?\\d*(м|ф|н|л|с|нс)$'", name='check_format_core'),
         CheckConstraint('inner_diametr > 0', name='check_inner_diametr'),
         CheckConstraint('radial > 0', name='check_radial'),
         CheckConstraint('inner_diametr < outer_diametr', name='inner_smaller_outer'),
@@ -73,33 +73,3 @@ class Construction(Base):
     __table_args__ = (
         UniqueConstraint('name', name='check_name_consrtruction'),
     )
-
-
-class Drennage(Base, ComponentName):
-    cable = relationship('Cable', back_populates='drennage')
-
-    __table_args__ = (
-        CheckConstraint("name ~ '^\d+x\d+\.?\d*м$'", name='check_format_drennage_name'),
-    )
-
-
-class Alumoflex(Base, ComponentName):
-    cable = relationship('Cable', back_populates='alumoflex')
-
-
-class Marker(Base):
-    text = mapped_column(String(64))
-    cable: Mapped["Cable"] = relationship('Cable', back_populates='marker')
-
-
-class Color(Base, ComponentName):
-    constructions = relationship('Construction', back_populates='color')
-
-
-class Plastic(Base, ComponentName):
-    isolate = relationship('Construction',
-                           foreign_keys='[Construction.isolate_plastic_id]',
-                           back_populates='isolate_plastic')
-    shell = relationship('Construction',
-                         foreign_keys='[Construction.shell_plastic_id]',
-                         back_populates='shell_plastic')

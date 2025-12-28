@@ -9,8 +9,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeBase
 
 from app.api.validators import BaseValidator, validate_name
-from app.core.db import Base, get_async_session
-from app.models.cable import (Alumoflex, Color, Drennage, Marker, Plastic)
+from app.core.db import get_async_session
+from app.models import Alumoflex, Color, Drennage, Marker, Plastic
 from app.schemas.base_schema import (AlumoflexDB, DrennageDB, MarkerDB, PlasticDB, ColorDB,
                                      AlumoflexCreate, DrennageCreate, MarkerCreate, PlasticCreate, ColorCreate)
 
