@@ -13,19 +13,19 @@ from app.schemas.isolation_schema import IsolationDB, IsolationBase, IsolationCr
 # from app.schemas.core_schemas import CoreCreate, CoreDB
 
 isolation_router = APIRouter(prefix='/isolation',
-                        tags=['isolation'],)
+                             tags=['isolation'],)
 
 
 @isolation_router.get('/',
-                 response_model=list[IsolationDB]
-                 )
+                      response_model=list[IsolationDB]
+                      )
 async def get_isolation(session: AsyncSession = Depends(get_async_session)):
     cores = await session.execute(select(Isolation))
     return cores.scalars().all()
 
 
 @isolation_router.post('/',
-                  response_model=IsolationDB)
+                       response_model=IsolationDB)
 async def post_core(obj_in: IsolationCreate,
                     session: AsyncSession = Depends(get_async_session)):
     obj_in_data = obj_in.dict()

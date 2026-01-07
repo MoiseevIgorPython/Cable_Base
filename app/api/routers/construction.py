@@ -37,7 +37,10 @@ async def create_construction(obj_in: ConstructionCreate,
 async def delete_construction(id: int,
                               session: AsyncSession = Depends(get_async_session)):
     # construction = await construction_exist(id, session)
-    construction = await session.execute(select(Construction).where(Construction.id == id))
+    construction = await session.execute(
+        select(
+            Construction).where(
+                Construction.id == id))
     deleting_obj = construction.scalars().first()
     await session.delete(deleting_obj)
     await session.commit()

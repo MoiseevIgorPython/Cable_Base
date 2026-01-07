@@ -8,7 +8,8 @@ class Drennage(Base, ComponentName):
     cable = relationship('Cable', back_populates='drennage')
 
     __table_args__ = (
-        CheckConstraint("name ~ '^\d+x\d+\.?\d*м$'", name='check_format_drennage_name'),
+        CheckConstraint("name ~ '^\d+x\d+\.?\d*м$'",
+                        name='check_format_drennage_name'),
     )
 
 
@@ -32,3 +33,7 @@ class Plastic(Base, ComponentName):
     shell = relationship('Construction',
                          foreign_keys='[Construction.shell_plastic_id]',
                          back_populates='shell_plastic')
+
+
+class Metall(Base, ComponentName):
+    core = relationship('Twisting', back_populates='metall')

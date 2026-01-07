@@ -28,7 +28,7 @@ def create_router(model_name: str,
                   create_schema: Type[CreateSchemaType],
                   response_schema: Type[ResponseSchemaType]
                   ) -> APIRouter:
-    
+
     router = APIRouter(prefix=f'/{model_name}', tags=[model_name])
 
     @router.get('/', response_model=list[response_schema])
@@ -46,7 +46,7 @@ def create_router(model_name: str,
         await session.commit()
         await session.refresh(new_component_obj)
         return new_component_obj
-    
+
     return router
 
 

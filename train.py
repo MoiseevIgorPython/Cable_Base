@@ -59,3 +59,71 @@
 # from app.models.cable import Cable, Isolation
 # for i in Base.metadata.tables: 
 #     print(i)
+
+#n = list(input('jewel: '))
+#m = list(input('stone: '))
+
+#count = 0
+
+#for i in set(n):
+#    for j in m:
+#        if i == j:
+#            count+=1
+
+#print(count)
+
+
+#n = list(input())
+
+#summa = [int(i) for i in n]
+
+#print(sum(summa))
+
+
+
+# N = int(input())
+# K = [int(input()) for _ in range(N)]
+
+# left = 0
+# right = len(K)
+
+# searching = True
+
+# while searching:
+#     mid = (left + right) // 2
+#     if K[mid] == 1:
+#         if K[mid+1] == 0:
+#             print(f'! {mid + 2}')
+#             searching = False
+#         left = mid
+#     elif K[mid] == 0:
+#         if K[mid-1] == 1:
+#             print(f'! {mid}')
+#             searching = False
+#         right = mid
+
+
+# n, m = map(int, input().split())
+
+# for _ in range(n):
+#     koord = map(int, input().split())[:m]
+
+# print(n, m)
+
+
+N = int(input())  # колво платформ
+
+H = list(map(int, input().split()))
+
+
+result = ''
+
+for i in range(len(H)):
+    for j in range(len(H)):
+        if H[j] > H[i] and j > i and ((i % 2) == (j % 2)):
+            result += f'{j-i} '
+            break
+        elif j == len(H) - 1:
+            result += '-1 '
+
+print(result)

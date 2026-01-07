@@ -1,5 +1,5 @@
-from .cable import Cable, Construction, Isolation
-from .components import Color, Plastic, Alumoflex, Drennage, Marker
+from .cable import Cable, Construction, Isolation, Twisting
+from .components import Color, Plastic, Alumoflex, Drennage, Marker, Metall
 
 __all__ = [
     'Cable',
@@ -9,5 +9,7 @@ __all__ = [
     'Plastic',
     'Alumoflex',
     'Drennage',
-    'Marker'
+    'Marker',
+    'Twisting',
+    'Metall'
     ]

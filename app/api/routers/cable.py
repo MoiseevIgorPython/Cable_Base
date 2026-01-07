@@ -24,7 +24,7 @@ async def get_cable(session: AsyncSession = Depends(get_async_session)):
 @cable_router.post('/',
                    response_model=CableDB)
 async def post_cable(obj_in: CableCreate,
-                    session: AsyncSession = Depends(get_async_session)):
+                     session: AsyncSession = Depends(get_async_session)):
     obj_in_data = obj_in.dict()
     cable = Cable(**obj_in_data)
     session.add(cable)
@@ -36,7 +36,7 @@ async def post_cable(obj_in: CableCreate,
 @cable_router.get('/{cable_id}/',
                   response_model=CableDB)
 async def get_cable_by_id(cable_id: int,
-                    session: AsyncSession = Depends(get_async_session)):
+                          session: AsyncSession = Depends(get_async_session)):
     cable = await session.execute(select(Cable).where(Cable.id == cable_id))
     cable = cable.scalar_one_or_none()
     if not cable:
