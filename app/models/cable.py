@@ -1,12 +1,12 @@
 from typing import Optional
 
-from sqlalchemy import Float, ForeignKey, Integer, String, CheckConstraint, UniqueConstraint, Computed
-
-from sqlalchemy.orm import mapped_column, Mapped, relationship, validates
+from sqlalchemy import (CheckConstraint, Computed, Float, ForeignKey, Integer,
+                        String, UniqueConstraint)
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from app.core.db import Base
-from app.models.components import Drennage, Alumoflex, Marker, Color, Plastic
+from app.models.components import Alumoflex, Color, Drennage, Marker, Plastic
 
 
 class Cable(Base):
@@ -66,23 +66,26 @@ class Cable(Base):
 class Isolation(Base):
     """Модель изолированной жилы."""
 
-    # core: Mapped[str] = mapped_column(String(32))  # 3x0.25м (fk на Twisting)
-    description: Mapped[str] = mapped_column(Computed("twist.count_wires || 'x' || twist.diametr_wires || twist.metall.name"))
+    core: Mapped[str] = mapped_column(String(32))  # Из связного объекта Twisting (twist_id)
     twist_id: Mapped[int] = mapped_column(ForeignKey("twisting.id",
+                                                     ondelete="CASCADE",
                                                      name="fk_twisting"))
     outer_diametr: Mapped[float] = mapped_column(Float)
     inner_diametr: Mapped[float] = mapped_column(Float)
-    radial: Mapped[float] = mapped_column(Float)
+    radial: Mapped[float] = mapped_column(Float,
+                                          Computed("(outer_diametr - inner_diametr) / 2"),
+                                          nullable=False)
 
     cable: Mapped[list["Cable"]] = relationship(back_populates="isolation",
                                                 cascade="all, delete-orphan",
                                                 passive_deletes=True)
     twist: Mapped["Twisting"] = relationship("Twisting",
+                                             lazy='joined',
                                              back_populates="isolation")
 
     __table_args__ = (
-        # CheckConstraint("core ~ '^\\d+x\\d+\\.?\\d*(м|ф|н|л|с|нс)$'",
-        #                 name='check_format_core'),
+        CheckConstraint("core ~ '^\\d+x\\d+\\.?\\d*(м|ф|н|л|с|нс)$'",
+                        name='check_format_core'),
         CheckConstraint('inner_diametr > 0',
                         name='check_inner_diametr'),
         CheckConstraint('radial > 0',
@@ -103,8 +106,12 @@ class Twisting(Base):
     resistance: Mapped[float] = mapped_column(Float)
     step: Mapped[float] = mapped_column(Float)
 
-    metall = relationship('Metall', back_populates='core')
-    core = relationship('Isolation', back_populates='twist')
+    metall = relationship('Metall',
+                          lazy='joined',
+                          back_populates='core')
+    isolation = relationship('Isolation',
+                             cascade="all, delete-orphan",
+                             back_populates='twist')
 
 
 class Construction(Base):

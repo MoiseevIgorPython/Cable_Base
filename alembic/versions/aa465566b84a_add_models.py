@@ -1,8 +1,8 @@
 """add_models
 
-Revision ID: b34814253f50
+Revision ID: aa465566b84a
 Revises: 
-Create Date: 2025-12-31 13:35:24.465278
+Create Date: 2026-02-05 14:10:48.027096
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'b34814253f50'
+revision: str = 'aa465566b84a'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -75,12 +75,13 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('isolation',
-    sa.Column('description', sa.String(), sa.Computed("twist.count_wires || 'x' || twist.diametr_wires || twist.metall.name", ), nullable=False),
+    sa.Column('core', sa.String(length=32), nullable=False),
     sa.Column('twist_id', sa.Integer(), nullable=False),
     sa.Column('outer_diametr', sa.Float(), nullable=False),
     sa.Column('inner_diametr', sa.Float(), nullable=False),
     sa.Column('radial', sa.Float(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.CheckConstraint("core ~ '^\\d+x\\d+\\.?\\d*(м|ф|н|л|с|нс)$'", name='check_format_core'),
     sa.CheckConstraint('inner_diametr < outer_diametr', name='inner_smaller_outer'),
     sa.CheckConstraint('inner_diametr > 0', name='check_inner_diametr'),
     sa.CheckConstraint('radial > 0', name='check_radial'),

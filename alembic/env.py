@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 from app.core.db import Base
 from app import models #noqa
+from app.core.config import settings
 
 from dotenv import load_dotenv
 
@@ -15,7 +16,7 @@ from dotenv import load_dotenv
 load_dotenv('.env')
 
 config = context.config
-config.set_main_option('sqlalchemy.url', os.environ['DATABASE_URL'])
+config.set_main_option('sqlalchemy.url', settings.async_database_url)
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)

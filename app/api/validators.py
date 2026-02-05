@@ -5,7 +5,8 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.cable import (Alumoflex, Cable, Color, Construction, Drennage, Marker, Plastic)
+from app.models.cable import (Alumoflex, Cable, Color, Construction, Drennage,
+                              Marker, Plastic)
 
 
 class BaseValidator:
@@ -56,3 +57,17 @@ async def number_exist(number,
         raise HTTPException(status_code=HTTPStatus.BAD_REQUEST,
                             detail='Такая конструкция уже существует')
     return obj
+
+#===========================================
+
+
+
+async def object_not_found(model,
+                           obj_id: int,
+                           session: AsyncSession):
+    current_object = await session.execute(select(model).where(model.id == obj_id))
+    current_object = current_object.scalars().first()
+    if current_object is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail=f'Объект {model.__name__} не найден.')
+    return current_object

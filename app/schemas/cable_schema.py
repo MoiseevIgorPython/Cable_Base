@@ -1,6 +1,8 @@
-from pydantic import BaseModel
 from typing import Optional
-from app.schemas.base_schema import AlumoflexDB, DrennageDB, ColorDB, MarkerDB, PlasticDB
+
+from pydantic import BaseModel
+
+from app.schemas.base_schema import (AlumoflexDB, DrennageDB, MarkerDB)
 from app.schemas.construction_schema import ConstructionDB
 from app.schemas.isolation_schema import IsolationDB
 

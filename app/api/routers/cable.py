@@ -1,14 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
-
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import construction_exist
+from app.api.validators import object_not_found
 from app.core.db import get_async_session
 from app.models import Cable
-
-from app.schemas.cable_schema import CableDB, CableCreate
-
+from app.schemas.cable_schema import CableCreate, CableDB
 
 cable_router = APIRouter(prefix='/cable',
                          tags=['cable'],)
@@ -22,7 +19,8 @@ async def get_cable(session: AsyncSession = Depends(get_async_session)):
 
 
 @cable_router.post('/',
-                   response_model=CableDB)
+                   response_model=CableDB
+                   )
 async def post_cable(obj_in: CableCreate,
                      session: AsyncSession = Depends(get_async_session)):
     obj_in_data = obj_in.dict()

@@ -1,5 +1,5 @@
 from sqlalchemy import CheckConstraint, String
-from sqlalchemy.orm import relationship, mapped_column, Mapped
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base, ComponentName
 

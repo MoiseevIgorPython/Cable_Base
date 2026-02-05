@@ -1,19 +1,18 @@
-import re
-from http import HTTPStatus
 from typing import Type, TypeVar
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeBase
 
-from app.api.validators import BaseValidator, validate_name
+from app.api.validators import object_not_found
 from app.core.db import get_async_session
 from app.models import Alumoflex, Color, Drennage, Marker, Plastic
-from app.schemas.base_schema import (AlumoflexDB, DrennageDB, MarkerDB, PlasticDB, ColorDB,
-                                     AlumoflexCreate, DrennageCreate, MarkerCreate, PlasticCreate, ColorCreate)
-
+from app.schemas.base_schema import (AlumoflexCreate, AlumoflexDB, ColorCreate,
+                                     ColorDB, DrennageCreate, DrennageDB,
+                                     MarkerCreate, MarkerDB, PlasticCreate,
+                                     PlasticDB)
 
 ModelType = TypeVar("ModelType", bound=DeclarativeBase)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -70,3 +69,4 @@ components_router.include_router(create_router(model_name='marker',
                                                db_model=Marker,
                                                create_schema=MarkerCreate,
                                                response_schema=MarkerDB))
+# добавить роутер для работы с Metall
