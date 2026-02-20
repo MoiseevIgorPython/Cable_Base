@@ -8,11 +8,11 @@ from sqlalchemy.orm import DeclarativeBase
 
 from app.api.validators import object_not_found
 from app.core.db import get_async_session
-from app.models import Alumoflex, Color, Drennage, Marker, Plastic
+from app.models import Alumoflex, Color, Drennage, Marker, Metall, Plastic
 from app.schemas.base_schema import (AlumoflexCreate, AlumoflexDB, ColorCreate,
                                      ColorDB, DrennageCreate, DrennageDB,
-                                     MarkerCreate, MarkerDB, PlasticCreate,
-                                     PlasticDB)
+                                     MarkerCreate, MarkerDB, MetallCreate,
+                                     MetallDB, PlasticCreate, PlasticDB)
 
 ModelType = TypeVar("ModelType", bound=DeclarativeBase)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -69,4 +69,7 @@ components_router.include_router(create_router(model_name='marker',
                                                db_model=Marker,
                                                create_schema=MarkerCreate,
                                                response_schema=MarkerDB))
-# добавить роутер для работы с Metall
+components_router.include_router(create_router(model_name='metall',
+                                               db_model=Metall,
+                                               create_schema=MetallCreate,
+                                               response_schema=MetallDB))

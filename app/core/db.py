@@ -3,7 +3,7 @@ from typing import AsyncGenerator
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import (declarative_base, declarative_mixin, declared_attr,
-                            sessionmaker)
+                            mapped_column, sessionmaker)
 
 from app.core.config import settings
 
@@ -17,16 +17,15 @@ class PreBase:
 
 @declarative_mixin
 class ComponentName:
-    name = Column(String(64))
+    name = mapped_column(String(64))
 
 
 Base = declarative_base(cls=PreBase)
 
 
-# engine = create_async_engine(settings.database_url, echo=True)
 engine = create_async_engine(settings.async_database_url, echo=True)
 async_session = AsyncSession(engine)
-AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession) 
+AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession)
 
 
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:

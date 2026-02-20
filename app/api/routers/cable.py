@@ -1,11 +1,22 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql import and_
 
 from app.api.validators import object_not_found
 from app.core.db import get_async_session
-from app.models import Cable
+from app.models import Cable, Construction, Isolation
 from app.schemas.cable_schema import CableCreate, CableDB
+
+
+class Filters(BaseModel):
+    article: Optional[int] = None
+    construction: Optional[str] = None
+    core: Optional[str] = None
+
 
 cable_router = APIRouter(prefix='/cable',
                          tags=['cable'],)
@@ -13,9 +24,23 @@ cable_router = APIRouter(prefix='/cable',
 
 @cable_router.get('/',
                   response_model=list[CableDB])
-async def get_cable(session: AsyncSession = Depends(get_async_session)):
-    cables = await session.execute(select(Cable))
-    return cables.scalars().all()
+async def get_cable(filters: Filters = Depends(),
+                    session: AsyncSession = Depends(get_async_session)):
+    query = select(Cable)
+    conditions = []
+    if filters.article is not None:
+        conditions.append(Cable.article == filters.article)
+    if filters.construction is not None:
+        query = query.join(Cable.construction)
+        conditions.append(Construction.name == filters.construction)
+    if filters.core is not None:
+        query = query.join(Cable.isolation)
+        conditions.append(Isolation.core == filters.core)
+    if conditions:
+        query = query.where(and_(*conditions))
+    result = await session.execute(query)
+    cables = result.scalars().all()
+    return cables
 
 
 @cable_router.post('/',

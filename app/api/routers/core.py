@@ -4,9 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_async_session
 from app.models import Isolation, Twisting
-from app.schemas.isolation_schema import (IsolationCreate,
-                                          IsolationDB)
-
+from app.schemas.isolation_schema import IsolationCreate, IsolationDB
 
 isolation_router = APIRouter(prefix='/isolation',
                              tags=['isolation'],)
