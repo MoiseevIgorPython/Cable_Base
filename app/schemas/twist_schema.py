@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from app.schemas.base_schema import MetallDB
+from .base_schema import MetallDB
 
 
 class TwistBase(BaseModel):

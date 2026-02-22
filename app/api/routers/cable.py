@@ -6,10 +6,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import and_
 
-from app.api.validators import object_not_found
-from app.core.db import get_async_session
-from app.models import Cable, Construction, Isolation
-from app.schemas.cable_schema import CableCreate, CableDB
+# from app.api.validators import object_not_found
+from core.db import get_async_session
+from models import Cable, Construction, Isolation
+from schemas.cable_schema import CableCreate, CableDB
 
 
 class Filters(BaseModel):

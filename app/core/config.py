@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     DB_NAME: str
 
     model_config = ConfigDict(
-        env_file='.env',
+        env_file='../.env',
         extra="ignore")
 
     @property

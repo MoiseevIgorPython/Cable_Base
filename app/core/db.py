@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import (declarative_base, declarative_mixin, declared_attr,
                             mapped_column, sessionmaker)
 
-from app.core.config import settings
+from .config import settings
 
 
 class PreBase:

@@ -2,10 +2,10 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import object_not_found
-from app.core.db import get_async_session
-from app.models import Construction
-from app.schemas.construction_schema import ConstructionCreate, ConstructionDB
+# from app.api.validators import object_not_found
+from core.db import get_async_session
+from models import Construction
+from schemas.construction_schema import ConstructionCreate, ConstructionDB
 
 construction_router = APIRouter(prefix='/construction',
                                 tags=['construction'],)

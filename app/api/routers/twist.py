@@ -6,10 +6,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import and_
 
-from app.api.validators import object_not_found
-from app.core.db import get_async_session
-from app.models import Metall, Twisting
-from app.schemas.twist_schema import TwistCreate, TwistDB
+# from app.api.validators import object_not_found
+from core.db import get_async_session
+from models import Metall, Twisting
+from schemas.twist_schema import TwistCreate, TwistDB
 
 
 class Filters(BaseModel):

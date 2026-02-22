@@ -1,11 +1,11 @@
 import uvicorn
 from fastapi import FastAPI
 
-from app.api.routers.cable import cable_router
-from app.api.routers.components import components_router
-from app.api.routers.construction import construction_router
-from app.api.routers.core import isolation_router
-from app.api.routers.twist import twist_router
+from api.routers.cable import cable_router
+from api.routers.components import components_router
+from api.routers.construction import construction_router
+from api.routers.core import isolation_router
+from api.routers.twist import twist_router
 
 app = FastAPI(docs_url='/swagger')
 

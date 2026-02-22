@@ -6,9 +6,9 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
-from app.core.db import Base
-from app import models #noqa
-from app.core.config import settings
+from core.db import Base
+import models #noqa
+from core.config import settings
 
 from dotenv import load_dotenv
 

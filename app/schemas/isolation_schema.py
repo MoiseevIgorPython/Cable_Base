@@ -1,13 +1,12 @@
 from pydantic import BaseModel
 
-from app.schemas.twist_schema import TwistDB
+from .twist_schema import TwistDB
 
 
 class IsolationBase(BaseModel):
     twist_id: int
     outer_diametr: float
     inner_diametr: float
-    twist: TwistDB
 
     class Config:
         from_attributes = True
@@ -18,7 +17,8 @@ class IsolationDB(IsolationBase):
     id: int
     core: str
     radial: float
+    twist: TwistDB
 
 
 class IsolationCreate(IsolationBase):
-    pass
+    twist_id: int

@@ -5,8 +5,8 @@ from sqlalchemy import (CheckConstraint, Computed, Float, ForeignKey, Integer,
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
-from app.core.db import Base
-from app.models.components import Alumoflex, Color, Drennage, Marker, Plastic
+from core.db import Base
+from .components import Alumoflex, Color, Drennage, Marker, Plastic
 
 
 class Cable(Base):
