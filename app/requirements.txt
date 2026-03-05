@@ -10,3 +10,8 @@ typing-inspection==0.4.1
 typing_extensions==4.14.1
 SQLAlchemy==2.0.41
 aiogram==3.22.0
+
+alembic==1.16.5
+uvicorn==0.38.0
+pydantic-settings==2.11.0
+asyncpg==0.31.0

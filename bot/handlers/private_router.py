@@ -1,11 +1,17 @@
+import os
+
 import aiohttp
 from aiogram import Router
 from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import Message, ReplyKeyboardRemove
+from dotenv import load_dotenv
 from filters.chat_type_filter import ChatTypeFilter
 from keyboards.reply_kbds import kdbs_from_data, start_kdbs
+
+load_dotenv('.env')
+
 
 private_router = Router()
 private_router.message.filter(ChatTypeFilter(['private']))
@@ -56,7 +62,7 @@ async def select_work(message: Message, state: FSMContext):
         await state.set_state(ShellIsolateState.construction)
 
         async with aiohttp.ClientSession() as session:
-            async with session.get('http://127.0.0.1:8000/api/construction/') as response:
+            async with session.get(f'http://{os.getenv('POSTGRES_HOST')}:8000/api/construction/') as response:
                 if response.status == 200:
                     data = await response.json()
                     await message.answer('Выберите конструкцию.',
@@ -67,7 +73,7 @@ async def select_work(message: Message, state: FSMContext):
         await state.update_data(work=message.text)
         await state.set_state(TwistState.metall)
         async with aiohttp.ClientSession() as session:
-            async with session.get('http://127.0.0.1:8000/api/components/metall/') as response:
+            async with session.get(f'http://{os.getenv('POSTGRES_HOST')}:8000/api/components/metall/') as response:
                 if response.status == 200:
                     data = await response.json()
                     await message.answer('Выберите металл.',
@@ -81,7 +87,7 @@ async def select_construction(message: Message, state: FSMContext):
     await state.update_data(construction=message.text)
     await state.set_state(ShellIsolateState.core)
     async with aiohttp.ClientSession() as session:
-        async with session.get('http://127.0.0.1:8000/api/isolation/') as response:
+        async with session.get(f'http://{os.getenv('POSTGRES_HOST')}:8000/api/isolation/') as response:
             if response.status == 200:
                 data = await response.json()
             else:
@@ -94,7 +100,7 @@ async def select_core(message: Message, state: FSMContext):
     await state.update_data(core=message.text)
     state_data = await state.get_data()
     async with aiohttp.ClientSession() as session:
-        async with session.get('http://127.0.0.1:8000/api/cable/',
+        async with session.get(f'http://{os.getenv('POSTGRES_HOST')}:8000/api/cable/',
                                params=state_data) as response:
             if response.status == 200:
                 data = await response.json()
@@ -145,7 +151,7 @@ async def select_diametr_wires(message: Message, state: FSMContext):
     await state.update_data(diametr_wires=message.text)
     state_data = await state.get_data()
     async with aiohttp.ClientSession() as session:
-        async with session.get('http://127.0.0.1:8000/api/twist/',
+        async with session.get(f'http://{os.getenv('POSTGRES_HOST')}:8000/api/twist/',
                                params=state_data) as response:
             if response.status == 200:
                 data = await response.json()

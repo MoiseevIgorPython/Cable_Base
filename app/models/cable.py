@@ -1,18 +1,18 @@
 from typing import Optional
 
-from sqlalchemy import (CheckConstraint, Computed, Float, ForeignKey, Integer,
-                        String, UniqueConstraint)
+from core.db import Base
+from sqlalchemy import (BigInteger, CheckConstraint, Computed, Float,
+                        ForeignKey, Integer, String, UniqueConstraint)
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
-from core.db import Base
 from .components import Alumoflex, Color, Drennage, Marker, Plastic
 
 
 class Cable(Base):
     """Модель готового кабеля."""
 
-    article: Mapped[int] = mapped_column(Integer, unique=True)
+    article: Mapped[int] = mapped_column(BigInteger, unique=True)
     outer_diametr: Mapped[float] = mapped_column(Float)
     inner_diametr: Mapped[float] = mapped_column(Float)
     radial: Mapped[float] = mapped_column(Float)
@@ -59,7 +59,9 @@ class Cable(Base):
         UniqueConstraint('article',
                          name='check_article'),
         UniqueConstraint('article', 'isolation_id', 'construction_id',
-                         name='unique_art_and_isolate')
+                         name='unique_art_and_isolate'),
+        CheckConstraint('article BETWEEN 100000000 AND 999999999',
+                        name="check_article_9_digits"),
     )
 
 

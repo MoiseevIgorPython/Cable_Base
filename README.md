@@ -27,8 +27,11 @@ Cable_Base - это система управления кабельной ба�
 
 ```text
 Cable_Base/
-├── alembic/                # миграции
+├── infra/                  # контенеризация
+│   ├── .env.production
+│   └── docker-compose.yml
 ├── app/                    # Серверная часть приложения
+│   ├── alembic/            # миграции
 │   ├── api/                # блок API (эндпоинты, валидаторы)
 │   ├── core/               # конфигурации системы
 │   ├── crud/               # CRUD операции
@@ -96,15 +99,16 @@ alembic upgrade head # применение миграций
 Запуск сервера:
 
 ```bash
-
-uvicorn app.main:app --reload
+cd app
+uvicorn main:app --reload
 ```
 
 Приложение будет доступно по адресу: http://localhost:8000
 
 🐳 Запуск через Docker (в разработке)
+Перейдите в директорию infra, добавьте данные для подклучения к базе в файл .env.production, и выполните команду docker compose up
 ```bash
-
+cd infra
 docker-compose up -d
 ```
 

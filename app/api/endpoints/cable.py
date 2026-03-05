@@ -1,15 +1,16 @@
 from typing import Optional
 
+from core.db import get_async_session
 from fastapi import APIRouter, Depends, HTTPException
+from models import Cable, Construction, Isolation
 from pydantic import BaseModel
+from schemas.cable_schema import CableCreate, CableDB
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import and_
 
-# from app.api.validators import object_not_found
-from core.db import get_async_session
-from models import Cable, Construction, Isolation
-from schemas.cable_schema import CableCreate, CableDB
+from ..validators import (object_by_data_exist, object_by_id_not_found,
+                          objects_not_found)
 
 
 class Filters(BaseModel):
@@ -44,12 +45,10 @@ async def get_cable(filters: Filters = Depends(),
 
 
 @cable_router.post('/',
-                   response_model=CableDB
-                   )
+                   response_model=CableDB)
 async def post_cable(obj_in: CableCreate,
                      session: AsyncSession = Depends(get_async_session)):
-    obj_in_data = obj_in.dict()
-    cable = Cable(**obj_in_data)
+    cable = await object_by_data_exist(Cable, obj_in, session)
     session.add(cable)
     await session.commit()
     await session.refresh(cable)
@@ -60,18 +59,13 @@ async def post_cable(obj_in: CableCreate,
                   response_model=CableDB)
 async def get_cable_by_id(cable_id: int,
                           session: AsyncSession = Depends(get_async_session)):
-    cable = await session.execute(select(Cable).where(Cable.id == cable_id))
-    cable = cable.scalar_one_or_none()
-    if not cable:
-        raise HTTPException(status_code=404, detail="Cable not found")
-    return cable
+    return await object_by_id_not_found(Cable, cable_id, session)
 
 
 @cable_router.delete('/{cable_id}')
 async def delete_cable(cable_id: int,
                        session: AsyncSession = Depends(get_async_session)):
-    cable = await session.execute(select(Cable).where(Cable.id == cable_id))
-    deleting_cable = cable.scalars().first()
+    deleting_cable = await object_by_id_not_found(Cable, cable_id, session)
     await session.delete(deleting_cable)
     await session.commit()
     return {"status": "Cable deleted successfully"}

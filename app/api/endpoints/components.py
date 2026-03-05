@@ -1,18 +1,17 @@
 from typing import Type, TypeVar
 
-from fastapi import APIRouter, Depends
-from pydantic import BaseModel
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import DeclarativeBase
-
 # from app.api.validators import object_not_found
 from core.db import get_async_session
+from fastapi import APIRouter, Depends
 from models import Alumoflex, Color, Drennage, Marker, Metall, Plastic
+from pydantic import BaseModel
 from schemas.base_schema import (AlumoflexCreate, AlumoflexDB, ColorCreate,
                                  ColorDB, DrennageCreate, DrennageDB,
                                  MarkerCreate, MarkerDB, MetallCreate,
                                  MetallDB, PlasticCreate, PlasticDB)
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import DeclarativeBase
 
 ModelType = TypeVar("ModelType", bound=DeclarativeBase)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)

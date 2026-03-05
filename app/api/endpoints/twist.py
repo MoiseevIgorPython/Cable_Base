@@ -1,15 +1,16 @@
 from typing import Optional
 
+from core.db import get_async_session
 from fastapi import APIRouter, Depends
+from models import Metall, Twisting
 from pydantic import BaseModel
+from schemas.twist_schema import TwistCreate, TwistDB
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import and_
 
-# from app.api.validators import object_not_found
-from core.db import get_async_session
-from models import Metall, Twisting
-from schemas.twist_schema import TwistCreate, TwistDB
+from ..validators import (object_by_data_exist, object_by_id_not_found,
+                          objects_not_found)
 
 
 class Filters(BaseModel):
@@ -46,8 +47,7 @@ async def get_twist(filters: Filters = Depends(),
                    response_model=TwistDB)
 async def post_twist(obj_in: TwistCreate,
                      session: AsyncSession = Depends(get_async_session)):
-    obj_in_data = obj_in.dict()
-    new_twist = Twisting(**obj_in_data)
+    new_twist = await object_by_data_exist(Twisting, obj_in, session)
     session.add(new_twist)
     await session.commit()
     await session.refresh(new_twist)
@@ -57,7 +57,7 @@ async def post_twist(obj_in: TwistCreate,
 @twist_router.delete('/{core_id}',)
 async def delete_twist(core_id: int,
                        session: AsyncSession = Depends(get_async_session)):
-    deleting_twist = await object_not_found(Twisting, core_id, session)
+    deleting_twist = await object_by_id_not_found(Twisting, core_id, session)
     await session.delete(deleting_twist)
     await session.commit()
     return {"status": "Twist deleted successfully"}

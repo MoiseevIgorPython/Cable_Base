@@ -1,0 +1,55 @@
+volumes:
+    pg_data:
+
+services:
+
+    db:
+      image: postgres:16
+      env_file: .env.production
+      environment:
+        POSTGRES_DB: mybase
+      volumes:
+        - pg_data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+        interval: 10s
+        retries: 5
+        start_period: 30s
+        timeout: 10s
+
+    backend: 
+      build: ../app
+      env_file: .env.production
+      environment:
+        POSTGRES_HOST: db
+      ports:
+        - "8000:8000"
+      depends_on:
+        db:
+          condition: service_healthy
+          restart: true
+      develop:
+        watch:
+          - action: sync+restart
+            path: ../app
+            target: /app
+
+    bot:
+      build: ../bot
+      env_file: .env.production
+      environment:
+        POSTGRES_HOST: backend
+      develop:
+        watch:
+          - action: sync+restart
+            path: ../bot
+            target: /bot
+
+    pg_admin:
+      image: dpage/pgadmin4
+      environment:
+        PGADMIN_DEFAULT_EMAIL: admin@admin.ru
+        PGADMIN_DEFAULT_PASSWORD: admin
+        PGADMIN_CONFIG_SERVER_MODE: 'false'
+      ports:
+        - "5050:80"

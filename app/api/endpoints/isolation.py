@@ -1,21 +1,20 @@
+from core.db import get_async_session
 from fastapi import APIRouter, Depends
+from models import Isolation, Twisting
+from schemas.isolation_schema import IsolationCreate, IsolationDB
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.db import get_async_session
-from models import Isolation, Twisting
-from schemas.isolation_schema import IsolationCreate, IsolationDB
+from ..validators import object_by_id_not_found, objects_not_found
 
 isolation_router = APIRouter(prefix='/isolation',
                              tags=['isolation'],)
 
 
 @isolation_router.get('/',
-                      response_model=list[IsolationDB]
-                      )
+                      response_model=list[IsolationDB])
 async def get_isolation(session: AsyncSession = Depends(get_async_session)):
-    cores = await session.execute(select(Isolation))
-    return cores.scalars().all()
+    return await objects_not_found(Isolation, session)
 
 
 @isolation_router.post('/',
@@ -27,7 +26,6 @@ async def post_core(obj_in: IsolationCreate,
     twist = twist.scalars().first()
     core_description = f'{twist.count_wires}x{twist.diametr_wires}{twist.metall.name[0].lower()}'
     obj_in_data['core'] = core_description
-    # obj_in_data['radial'] = round((obj_in_data['outer_diametr'] - obj_in_data['inner_diametr']) / 2, 1)
     new_core = Isolation(**obj_in_data)
     session.add(new_core)
     await session.commit()
@@ -38,9 +36,7 @@ async def post_core(obj_in: IsolationCreate,
 @isolation_router.delete('/{core_id}',)
 async def delete_core(core_id: int,
                       session: AsyncSession = Depends(get_async_session)):
-    # obj = await object_exist(core_id, session)
-    core = await session.execute(select(Isolation).where(Isolation.id == core_id))
-    deleting_core = core.scalars().first()
+    deleting_core = await object_by_id_not_found(Isolation, core_id, session)
     await session.delete(deleting_core)
     await session.commit()
     return {"status": "Core deleted successfully"}
