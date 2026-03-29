@@ -1,19 +1,19 @@
 from typing import Optional
 
-from core.db import get_async_session
-from fastapi import APIRouter, Depends, HTTPException
-from models import Cable, Construction, Isolation
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from schemas.cable_schema import CableCreate, CableDB
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql import and_
 
-from ..validators import (object_by_data_exist, object_by_id_not_found,
-                          objects_not_found)
+from core.db import get_async_session
+from crud.crud_cable import cable_crud
+from models import Cable
+from schemas.cable_schema import CableCreate, CableDB
+
+from ..validators import (object_by_data_exist,
+                          object_by_id_not_found)
 
 
-class Filters(BaseModel):
+class CableFilter(BaseModel):
     article: Optional[int] = None
     construction: Optional[str] = None
     core: Optional[str] = None
@@ -25,22 +25,15 @@ cable_router = APIRouter(prefix='/cable',
 
 @cable_router.get('/',
                   response_model=list[CableDB])
-async def get_cable(filters: Filters = Depends(),
+async def get_cable(skip: int = 0,
+                    limit: int = 100,
+                    filters: CableFilter = Depends(),
                     session: AsyncSession = Depends(get_async_session)):
-    query = select(Cable)
-    conditions = []
-    if filters.article is not None:
-        conditions.append(Cable.article == filters.article)
-    if filters.construction is not None:
-        query = query.join(Cable.construction)
-        conditions.append(Construction.name == filters.construction)
-    if filters.core is not None:
-        query = query.join(Cable.isolation)
-        conditions.append(Isolation.core == filters.core)
-    if conditions:
-        query = query.where(and_(*conditions))
-    result = await session.execute(query)
-    cables = result.scalars().all()
+    filter_dict = filters.dict(exclude_unset=True, exclude_none=True)
+    cables = await cable_crud.get_multi(session,
+                                        skip=skip,
+                                        limit=limit,
+                                        **filter_dict)
     return cables
 
 

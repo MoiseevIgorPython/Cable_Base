@@ -1,8 +1,11 @@
-from core.db import get_async_session
 from fastapi import APIRouter, Depends
-from models import Construction
-from schemas.construction_schema import ConstructionCreate, ConstructionDB
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from core.db import get_async_session
+from crud.crud_cable import construction_crud
+from models import Construction
+from schemas.construction_schema import (ConstructionCreate, ConstructionDB,
+                                         ConstructionUpdate)
 
 from ..validators import (object_by_data_exist, object_by_id_not_found,
                           objects_not_found)
@@ -22,13 +25,19 @@ async def get_construction(session: AsyncSession = Depends(get_async_session)):
 async def create_construction(obj_in: ConstructionCreate,
                               session: AsyncSession = Depends(
                                   get_async_session)):
-    new_construction = await object_by_data_exist(Construction,
-                                                  obj_in,
-                                                  session)
-    session.add(new_construction)
-    await session.commit()
-    await session.refresh(new_construction)
-    return new_construction
+    await object_by_data_exist(Construction,
+                               obj_in,
+                               session)
+    return await construction_crud.create(obj_in, session)
+
+
+@construction_router.get('/{id}',
+                         response_model=ConstructionDB)
+async def get_construction_by_id(id: int,
+                                 session: AsyncSession = Depends(
+                                     get_async_session)):
+    await object_by_id_not_found(Construction, id, session)
+    return await construction_crud.get(id, session)
 
 
 @construction_router.delete('/{id}')
@@ -36,6 +45,17 @@ async def delete_construction(id: int,
                               session: AsyncSession = Depends(
                                   get_async_session)):
     construction = await object_by_id_not_found(Construction, id, session)
-    await session.delete(construction)
-    await session.commit()
-    return {"status": "Construction deleted successfully"}
+    deleted_obj = await construction_crud.remove(construction, session)
+    return {"status": "Construction deleted successfully",
+            "deleted_obj": deleted_obj}         # доработать вывод
+
+
+@construction_router.patch('/{id}',
+                           response_model=ConstructionDB)
+async def update_construction(id: int,
+                              obj_in: ConstructionUpdate,
+                              session: AsyncSession = Depends(
+                                  get_async_session)):
+    construction = await object_by_id_not_found(Construction, id, session)
+    obj_in_data = obj_in.dict(exclude_unset=True, exclude_none=True)
+    return await construction_crud.update(construction, obj_in_data, session)

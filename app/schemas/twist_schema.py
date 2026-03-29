@@ -15,7 +15,6 @@ class TwistBase(BaseModel):
 
 
 class TwistDB(TwistBase):
-    id: int
     metall: MetallDB
 
 

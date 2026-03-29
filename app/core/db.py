@@ -1,9 +1,11 @@
 from typing import AsyncGenerator
 
-from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import (declarative_base, declarative_mixin, declared_attr,
                             mapped_column, sessionmaker)
+
+import events  # noqa
 
 from .config import settings
 
@@ -12,7 +14,7 @@ class PreBase:
     @declared_attr
     def __tablename__(cls):
         return cls.__name__.lower()
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
 
 @declarative_mixin

@@ -1,19 +1,19 @@
 from typing import Optional
 
-from core.db import get_async_session
 from fastapi import APIRouter, Depends
-from models import Metall, Twisting
 from pydantic import BaseModel
-from schemas.twist_schema import TwistCreate, TwistDB
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql import and_
 
-from ..validators import (object_by_data_exist, object_by_id_not_found,
-                          objects_not_found)
+from core.db import get_async_session
+from crud.crud_cable import twisting_crud
+from models import Twisting
+from schemas.twist_schema import TwistCreate, TwistDB
+
+from ..validators import (object_by_data_exist,
+                          object_by_id_not_found)
 
 
-class Filters(BaseModel):
+class TwistFilter(BaseModel):
     metall: Optional[str] = None
     count_wires: Optional[int] = None
     diametr_wires: Optional[float] = None
@@ -23,23 +23,16 @@ twist_router = APIRouter(prefix='/twist',
                          tags=['twist'],)
 
 
-@twist_router.get('/',
-                  response_model=list[TwistDB])
-async def get_twist(filters: Filters = Depends(),
+@twist_router.get('/', response_model=list[TwistDB])
+async def get_twist(skip: int = 0,
+                    limit: int = 100,
+                    filters: TwistFilter = Depends(),
                     session: AsyncSession = Depends(get_async_session)):
-    query = select(Twisting)
-    conditions = []
-    if filters.metall is not None:
-        query = query.join(Twisting.metall)
-        conditions.append(Metall.name == filters.metall)
-    if filters.count_wires is not None:
-        conditions.append(Twisting.count_wires == filters.count_wires)
-    if filters.diametr_wires is not None:
-        conditions.append(Twisting.diametr_wires == filters.diametr_wires)
-    if conditions:
-        query = query.where(and_(*conditions))
-    result = await session.execute(query)
-    twistes = result.scalars().all()
+    filter_dict = filters.dict(exclude_unset=True, exclude_none=True)
+    twistes = await twisting_crud.get_multi(session,
+                                            skip=skip,
+                                            limit=limit,
+                                            **filter_dict)
     return twistes
 
 

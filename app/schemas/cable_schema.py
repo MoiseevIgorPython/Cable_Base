@@ -4,18 +4,18 @@ from pydantic import BaseModel
 
 from .base_schema import AlumoflexDB, DrennageDB, MarkerDB
 from .construction_schema import ConstructionDB
-from .isolation_schema import IsolationDB
+from .twist_schema import TwistDB
 
 
 class CableBase(BaseModel):
     article: int
-    outer_diametr: float
-    inner_diametr: float
-    radial: float
 
 
 class CableDB(CableBase):
-    isolation: IsolationDB
+    title: str
+    outer_diametr: float
+    inner_diametr: float
+    twisting: TwistDB
     construction: ConstructionDB
     drennage: DrennageDB
     alumoflex: AlumoflexDB
@@ -26,7 +26,7 @@ class CableDB(CableBase):
 
 
 class CableCreate(CableBase):
-    isolation_id: int
+    twist_id: int
     construction_id: int
     drennage_id: int
     alumoflex_id: int

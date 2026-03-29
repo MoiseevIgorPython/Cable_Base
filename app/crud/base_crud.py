@@ -1,10 +1,12 @@
 from typing import Any, Dict, List, Optional, TypeVar
 
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.decl_api import DeclarativeMeta
 
 ModelType = TypeVar('ModelType', bound=DeclarativeMeta)
+SchemaType = TypeVar('SchemaType', bound=BaseModel)
 
 
 class BaseCRUD:
@@ -32,8 +34,19 @@ class BaseCRUD:
     async def get(self,
                   id: int,
                   session: AsyncSession) -> Optional[ModelType]:
-        result = await session.execute(select(self.model).where(self.model.id == id))
+        result = await session.execute(select(self.model)
+                                       .where(self.model.id == id))
         return result.scalar_one_or_none()
+
+    async def create(self,
+                     obj_in: SchemaType,
+                     session: AsyncSession):
+        obj_in_data = obj_in.dict()
+        new_obj = self.model(**obj_in_data)
+        session.add(new_obj)
+        await session.commit()
+        await session.refresh(new_obj)
+        return new_obj
 
     async def update(self,
                      db_obj: ModelType,

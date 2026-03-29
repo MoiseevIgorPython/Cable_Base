@@ -19,19 +19,19 @@ class MarkerDB(BaseModel):
 
 
 class AlumoflexDB(BaseDB):
-    id: int
+    pass
 
 
 class PlasticDB(BaseDB):
-    id: int
+    pass
 
 
 class DrennageDB(BaseDB):
-    id: int
+    pass
 
 
 class ColorDB(BaseDB):
-    id: int
+    pass
 
 
 class AlumoflexCreate(BaseDB):
@@ -55,7 +55,7 @@ class MarkerCreate(MarkerDB):
 
 
 class MetallDB(BaseDB):
-    id: int
+    pass
 
 
 class MetallCreate(BaseDB):

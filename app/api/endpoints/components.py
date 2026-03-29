@@ -1,17 +1,17 @@
 from typing import Type, TypeVar
 
-# from app.api.validators import object_not_found
-from core.db import get_async_session
-from fastapi import APIRouter, Depends
-from models import Alumoflex, Color, Drennage, Marker, Metall, Plastic
+from fastapi import APIRouter, Body, Depends
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import DeclarativeBase
+
+from core.db import get_async_session
+from crud.base_crud import BaseCRUD
+from models import Alumoflex, Color, Drennage, Marker, Metall, Plastic
 from schemas.base_schema import (AlumoflexCreate, AlumoflexDB, ColorCreate,
                                  ColorDB, DrennageCreate, DrennageDB,
                                  MarkerCreate, MarkerDB, MetallCreate,
                                  MetallDB, PlasticCreate, PlasticDB)
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import DeclarativeBase
 
 ModelType = TypeVar("ModelType", bound=DeclarativeBase)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -22,28 +22,32 @@ components_router = APIRouter(prefix='/components')
 
 
 def create_router(model_name: str,
-                  db_model: Type[ModelType],
+                  db_model: ModelType,
                   create_schema: Type[CreateSchemaType],
                   response_schema: Type[ResponseSchemaType]
                   ) -> APIRouter:
 
     router = APIRouter(prefix=f'/{model_name}', tags=[model_name])
+    crud = BaseCRUD(db_model)
 
     @router.get('/', response_model=list[response_schema])
-    async def get_component(session: AsyncSession = Depends(get_async_session)):
-        component = await session.execute(select(db_model))
-        return component.scalars().all()
-
+    async def get_component(skip: int = 0,
+                            limit: int = 100,
+                            session: AsyncSession = Depends(
+                                get_async_session)):
+        objects = await crud.get_multi(session,
+                                       skip=skip,
+                                       limit=limit)
+        return objects
 
     @router.post('/', response_model=response_schema)
-    async def post_component(obj_in: CreateSchemaType,
-                             session: AsyncSession = Depends(get_async_session)):
-        obj_in_data = obj_in.dict()
-        new_component_obj = db_model(**obj_in_data)
-        session.add(new_component_obj)
-        await session.commit()
-        await session.refresh(new_component_obj)
-        return new_component_obj
+    async def post_component(
+        component_data: create_schema = Body(
+            ...,
+            description="Данные для создания"),
+            session: AsyncSession = Depends(get_async_session)):
+        return await crud.create(component_data,
+                                 session)
 
     return router
 

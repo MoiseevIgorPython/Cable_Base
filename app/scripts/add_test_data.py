@@ -27,17 +27,6 @@ for file in component_files:
                 f"INSERT INTO {file.split('.')[0]} ({column})"
                 f"VALUES ({placeholders})", list(row))
 
-# for file in other_files:
-#     with open(f"{BASE_DIR}/test_data/other/{file}", 'r', encoding='utf-8') as f:
-#         reader = csv.reader(f)
-#         header = next(reader)
-#         column = ', '.join(header)
-#         placeholders = ', '.join(['%s'] * len(header))
-#         for row in reader:
-#             cur.execute(
-#                 f"INSERT INTO {file.split('.')[0]} ({column})"
-#                 f"VALUES ({placeholders})", list(row))
-
 conn.commit()
 cur.close()
 conn.close()

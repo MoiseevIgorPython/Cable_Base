@@ -10,7 +10,7 @@ from aiogram.types import (BotCommandScopeAllGroupChats,
                            BotCommandScopeAllPrivateChats)
 from dotenv import load_dotenv
 
-load_dotenv('.env')
+load_dotenv('../.env')
 
 from common.bot_cmds import BOT_CMDS_GROUP, BOT_CMDS_PRIVATE
 from handlers.group_router import group_router
@@ -34,3 +34,4 @@ async def main() -> None:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     asyncio.run(main())
+

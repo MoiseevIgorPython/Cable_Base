@@ -1,6 +1,7 @@
-from core.db import Base, ComponentName
 from sqlalchemy import CheckConstraint, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from core.db import Base, ComponentName
 
 
 class Drennage(Base, ComponentName):
@@ -9,7 +10,7 @@ class Drennage(Base, ComponentName):
     __table_args__ = (
         CheckConstraint("name ~ '^\d+x\d+\.?\d*м$'",
                         name='check_format_drennage_name'),
-    )
+                        )
 
 
 class Alumoflex(Base, ComponentName):
