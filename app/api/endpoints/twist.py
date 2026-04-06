@@ -1,16 +1,16 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends
-from pydantic import BaseModel
-from sqlalchemy.ext.asyncio import AsyncSession
-
+from api.dependencies import current_superuser, current_user
 from core.db import get_async_session
 from crud.crud_cable import twisting_crud
+from fastapi import APIRouter, Depends
 from models import Twisting
+from models.users import User
+from pydantic import BaseModel
 from schemas.twist_schema import TwistCreate, TwistDB
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..validators import (object_by_data_exist,
-                          object_by_id_not_found)
+from ..validators import object_by_data_exist, object_by_id_not_found
 
 
 class TwistFilter(BaseModel):
@@ -27,7 +27,9 @@ twist_router = APIRouter(prefix='/twist',
 async def get_twist(skip: int = 0,
                     limit: int = 100,
                     filters: TwistFilter = Depends(),
-                    session: AsyncSession = Depends(get_async_session)):
+                    session: AsyncSession = Depends(get_async_session),
+                    user: User = Depends(current_user)
+                    ):
     filter_dict = filters.dict(exclude_unset=True, exclude_none=True)
     twistes = await twisting_crud.get_multi(session,
                                             skip=skip,
@@ -39,7 +41,8 @@ async def get_twist(skip: int = 0,
 @twist_router.post('/',
                    response_model=TwistDB)
 async def post_twist(obj_in: TwistCreate,
-                     session: AsyncSession = Depends(get_async_session)):
+                     session: AsyncSession = Depends(get_async_session),
+                     user: User = Depends(current_superuser)):
     new_twist = await object_by_data_exist(Twisting, obj_in, session)
     session.add(new_twist)
     await session.commit()
@@ -49,7 +52,8 @@ async def post_twist(obj_in: TwistCreate,
 
 @twist_router.delete('/{core_id}',)
 async def delete_twist(core_id: int,
-                       session: AsyncSession = Depends(get_async_session)):
+                       session: AsyncSession = Depends(get_async_session),
+                       user: User = Depends(current_superuser)):
     deleting_twist = await object_by_id_not_found(Twisting, core_id, session)
     await session.delete(deleting_twist)
     await session.commit()

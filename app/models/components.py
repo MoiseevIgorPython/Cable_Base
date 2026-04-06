@@ -1,7 +1,6 @@
+from core.db import Base, ComponentName
 from sqlalchemy import CheckConstraint, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from core.db import Base, ComponentName
 
 
 class Drennage(Base, ComponentName):
@@ -20,6 +19,9 @@ class Alumoflex(Base, ComponentName):
 class Marker(Base):
     text = mapped_column(String(64))
     cable: Mapped['Cable'] = relationship('Cable', back_populates='marker')
+
+    def __str__(self):
+        return self.text
 
 
 class Color(Base, ComponentName):

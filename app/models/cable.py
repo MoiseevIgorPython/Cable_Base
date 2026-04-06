@@ -1,12 +1,11 @@
 from typing import Optional
 
-from sqlalchemy import (BigInteger, CheckConstraint, Computed, Float,
-                        ForeignKey, Integer, String, UniqueConstraint,
-                        event, select)
-from sqlalchemy.ext.hybrid import hybrid_property # noqa
-from sqlalchemy.orm import (Mapped, Session, mapped_column, relationship)
-
 from core.db import Base
+from sqlalchemy import (BigInteger, CheckConstraint, Computed, Float,
+                        ForeignKey, Integer, String, UniqueConstraint, cast,
+                        event, func, select)
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
 
 from .components import Alumoflex, Color, Drennage, Marker, Plastic
 
@@ -66,6 +65,9 @@ class Cable(Base):
                         name="check_article_9_digits"),
     )
 
+    def __repr__(self):
+        return self.title
+
 
 class Twisting(Base):
     """Модель скрученной проволоки."""
@@ -87,6 +89,9 @@ class Twisting(Base):
     cable: Mapped["Cable"] = relationship('Cable',
                                           cascade="all, delete-orphan",
                                           back_populates="twisting")
+
+    def __str__(self):
+        return f"{self.count_wires}x{self.diametr_wires} {self.metall.name}"
 
 
 class Construction(Base):
@@ -128,8 +133,25 @@ class Construction(Base):
         UniqueConstraint('name', name='check_name_consrtruction'),
         )
 
+    def __str__(self):
+        return self.name
+
+    @hybrid_property
+    def sort_number(self):
+        try:
+            return int(self.name.split('-')[1]) if '-' in self.name and self.name.split('-')[1].isdigit() else 0
+        except (IndexError, ValueError):
+            return 0
+
+    @sort_number.expression
+    def sort_number(cls):
+        return cast(
+            func.substring(cls.name, func.strpos(cls.name, '-') + 1),
+            Integer)
+
 
 @event.listens_for(Cable, 'before_insert')
+@event.listens_for(Cable, 'before_update')
 def create_fields_cable(mapper, connection, target):
     session = Session(bind=connection)
     twist = session.execute(select(Twisting)
@@ -142,7 +164,8 @@ def create_fields_cable(mapper, connection, target):
     construction = construction.scalar_one_or_none()
     inner_diametr = (twist.diametr_twist + construction.radial_isolate * 2) * 2
     outer_diametr = inner_diametr + construction.radial_shell * 2
-    title = f"{construction.name} {twist.count_wires}x{twist.diametr_wires} {twist.metall.name}"
+    title = f"{construction.name} {twist.count_wires}x"
+    f"{twist.diametr_wires} {twist.metall.name}"
     target.inner_diametr = round(inner_diametr, 2)
     target.outer_diametr = round(outer_diametr, 2)
     target.title = title
@@ -160,10 +183,11 @@ def receive_after_update(mapper, connection, target):
             select(Twisting)
             .where(Twisting.id == cable.twist_id))
         twist = twist.scalar_one_or_none()
-        inner_diametr = (twist.diametr_twist + target.radial_isolate * 2) * 2
-        outer_diametr = inner_diametr + target.radial_shell * 2
+        inner_diametr = (twist.diametr_twist + float(target.radial_isolate) * 2) * 2
+        outer_diametr = inner_diametr + float(target.radial_shell) * 2
 
-        cable.title = f"{target.name} {twist.count_wires}x{twist.diametr_wires} {twist.metall.name}"
-        cable.inner_diametr = inner_diametr
-        cable.outer_diametr = outer_diametr
+        cable.title = f"{target.name} {twist.count_wires}x"
+        f"{twist.diametr_wires} {twist.metall.name}"
+        cable.inner_diametr = round(inner_diametr, 2)
+        cable.outer_diametr = round(outer_diametr, 2)
         session.commit()

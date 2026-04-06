@@ -1,18 +1,18 @@
-"""add models
+"""add_models
 
-Revision ID: f1d11241d9fc
+Revision ID: d7037994af60
 Revises: 
-Create Date: 2026-03-29 13:46:04.558993
+Create Date: 2026-04-03 13:03:10.610172
 
 """
 from typing import Sequence, Union
 
 import sqlalchemy as sa
-
 from alembic import op
+from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = 'f1d11241d9fc'
+revision: str = 'd7037994af60'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -52,6 +52,21 @@ def upgrade() -> None:
     sa.Column('name', sa.String(length=64), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('user',
+    sa.Column('tg_id', sa.Integer(), nullable=False),
+    sa.Column('first_name', sa.String(), nullable=False),
+    sa.Column('second_name', sa.String(), nullable=False),
+    sa.Column('role', postgresql.ENUM('ADMIN', 'USER', name='userrole', create_type=False), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('email', sa.String(length=320), nullable=False),
+    sa.Column('hashed_password', sa.String(length=1024), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('is_superuser', sa.Boolean(), nullable=False),
+    sa.Column('is_verified', sa.Boolean(), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('tg_id')
+    )
+    op.create_index(op.f('ix_user_email'), 'user', ['email'], unique=True)
     op.create_table('construction',
     sa.Column('name', sa.String(length=64), nullable=False),
     sa.Column('color_id', sa.Integer(), nullable=False),
@@ -82,7 +97,7 @@ def upgrade() -> None:
     sa.Column('title', sa.String(), server_default='untitled', nullable=False),
     sa.Column('article', sa.BigInteger(), nullable=False),
     sa.Column('outer_diametr', sa.Float(), nullable=True),
-    sa.Column('inner_diametr', sa.Float(), nullable=False),
+    sa.Column('inner_diametr', sa.Float(), nullable=True),
     sa.Column('twist_id', sa.Integer(), nullable=False),
     sa.Column('construction_id', sa.Integer(), nullable=False),
     sa.Column('drennage_id', sa.Integer(), nullable=False),
@@ -111,6 +126,8 @@ def downgrade() -> None:
     op.drop_table('cable')
     op.drop_table('twisting')
     op.drop_table('construction')
+    op.drop_index(op.f('ix_user_email'), table_name='user')
+    op.drop_table('user')
     op.drop_table('plastic')
     op.drop_table('metall')
     op.drop_table('marker')

@@ -1,16 +1,15 @@
 import asyncio
-import os
 from logging.config import fileConfig
 
-from dotenv import load_dotenv
-from sqlalchemy import pool
-from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import async_engine_from_config
-
+import alembic_postgresql_enum  # noqa
 import models  # noqa
 from alembic import context
 from core.config import settings
 from core.db import Base
+from dotenv import load_dotenv
+from sqlalchemy import pool
+from sqlalchemy.engine import Connection
+from sqlalchemy.ext.asyncio import async_engine_from_config
 
 load_dotenv('.env')
 
@@ -21,6 +20,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.

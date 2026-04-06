@@ -1,16 +1,16 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends
-from pydantic import BaseModel
-from sqlalchemy.ext.asyncio import AsyncSession
-
+from api.dependencies import current_superuser, current_user
 from core.db import get_async_session
 from crud.crud_cable import cable_crud
+from fastapi import APIRouter, Depends
 from models import Cable
+from models.users import User
+from pydantic import BaseModel
 from schemas.cable_schema import CableCreate, CableDB
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..validators import (object_by_data_exist,
-                          object_by_id_not_found)
+from ..validators import object_by_data_exist, object_by_id_not_found
 
 
 class CableFilter(BaseModel):
@@ -28,7 +28,9 @@ cable_router = APIRouter(prefix='/cable',
 async def get_cable(skip: int = 0,
                     limit: int = 100,
                     filters: CableFilter = Depends(),
-                    session: AsyncSession = Depends(get_async_session)):
+                    session: AsyncSession = Depends(get_async_session),
+                    user: User = Depends(current_user)
+                    ):
     filter_dict = filters.dict(exclude_unset=True, exclude_none=True)
     cables = await cable_crud.get_multi(session,
                                         skip=skip,
@@ -40,7 +42,9 @@ async def get_cable(skip: int = 0,
 @cable_router.post('/',
                    response_model=CableDB)
 async def post_cable(obj_in: CableCreate,
-                     session: AsyncSession = Depends(get_async_session)):
+                     session: AsyncSession = Depends(get_async_session),
+                     user: User = Depends(current_superuser)
+                     ):
     cable = await object_by_data_exist(Cable, obj_in, session)
     session.add(cable)
     await session.commit()
@@ -51,13 +55,17 @@ async def post_cable(obj_in: CableCreate,
 @cable_router.get('/{cable_id}/',
                   response_model=CableDB)
 async def get_cable_by_id(cable_id: int,
-                          session: AsyncSession = Depends(get_async_session)):
+                          session: AsyncSession = Depends(get_async_session),
+                          user: User = Depends(current_user)
+                          ):
     return await object_by_id_not_found(Cable, cable_id, session)
 
 
 @cable_router.delete('/{cable_id}')
 async def delete_cable(cable_id: int,
-                       session: AsyncSession = Depends(get_async_session)):
+                       session: AsyncSession = Depends(get_async_session),
+                       user: User = Depends(current_superuser)
+                       ):
     deleting_cable = await object_by_id_not_found(Cable, cable_id, session)
     await session.delete(deleting_cable)
     await session.commit()

@@ -1,17 +1,18 @@
 from typing import Type, TypeVar
 
-from fastapi import APIRouter, Body, Depends
-from pydantic import BaseModel
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import DeclarativeBase
-
+from api.dependencies import current_superuser, current_user
 from core.db import get_async_session
 from crud.base_crud import BaseCRUD
+from fastapi import APIRouter, Body, Depends
 from models import Alumoflex, Color, Drennage, Marker, Metall, Plastic
+from models.users import User
+from pydantic import BaseModel
 from schemas.base_schema import (AlumoflexCreate, AlumoflexDB, ColorCreate,
                                  ColorDB, DrennageCreate, DrennageDB,
                                  MarkerCreate, MarkerDB, MetallCreate,
                                  MetallDB, PlasticCreate, PlasticDB)
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import DeclarativeBase
 
 ModelType = TypeVar("ModelType", bound=DeclarativeBase)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -34,7 +35,8 @@ def create_router(model_name: str,
     async def get_component(skip: int = 0,
                             limit: int = 100,
                             session: AsyncSession = Depends(
-                                get_async_session)):
+                                get_async_session),
+                            user: User = Depends(current_user)):
         objects = await crud.get_multi(session,
                                        skip=skip,
                                        limit=limit)
@@ -45,7 +47,8 @@ def create_router(model_name: str,
         component_data: create_schema = Body(
             ...,
             description="Данные для создания"),
-            session: AsyncSession = Depends(get_async_session)):
+            session: AsyncSession = Depends(get_async_session),
+            user: User = Depends(current_superuser)):
         return await crud.create(component_data,
                                  session)
 

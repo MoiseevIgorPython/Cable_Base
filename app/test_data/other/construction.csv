@@ -1,3 +1,7 @@
-name,color_id,isolate_plastic_id,shell_plastic_id,id
-К-32,1,4,2,1
-К-149,2,4,1,2
+name,color_id,isolate_plastic_id,shell_plastic_id,radial_isolate,radial_shell,id
+К-32,1,4,2,0.4,0.6,1
+К-149,2,4,1,0.4,0.6,2
+К-182,2,4,1,0.4,0.5,3
+К-183,2,4,1,0.6,0.8,4
+К-1022,3,4,2,0.4,0.6,5
+К-1025,3,4,2,0.45,0.65,6

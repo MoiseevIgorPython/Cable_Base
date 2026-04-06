@@ -5,8 +5,6 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import (declarative_base, declarative_mixin, declared_attr,
                             mapped_column, sessionmaker)
 
-import events  # noqa
-
 from .config import settings
 
 
@@ -21,12 +19,16 @@ class PreBase:
 class ComponentName:
     name = mapped_column(String(64))
 
+    def __str__(self):
+        return self.name
+
 
 Base = declarative_base(cls=PreBase)
 
 
 engine = create_async_engine(settings.async_database_url, echo=True)
 async_session = AsyncSession(engine)
+
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession)
 
 

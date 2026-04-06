@@ -1,7 +1,6 @@
 from .cable import Cable, Construction, Twisting
 from .components import Alumoflex, Color, Drennage, Marker, Metall, Plastic
-
-# from .users import User
+from .users import User
 
 __all__ = [
     'Cable',
@@ -13,5 +12,5 @@ __all__ = [
     'Marker',
     'Twisting',
     'Metall',
-    # 'User'
+    'User'
     ]

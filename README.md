@@ -95,6 +95,11 @@ cp .env.example .env
 alembic revision --autogenerate -m "message" # создание нового сценария
 alembic upgrade head # применение миграций
 ```
+Загрузить компоненты в БД:
+
+```bash
+python scripts/add_test_data.py
+```
 
 Запуск сервера:
 
@@ -119,8 +124,6 @@ docker-compose up -d
 
     Construction - конструкция кабеля
 
-    Isolation - изолированная жила
-
     Twisting - скрученная металическая проволока
 
 
@@ -129,3 +132,10 @@ docker-compose up -d
 После запуска сервера документация API доступна:
 
     Swagger UI: http://localhost:8000/swagger/
+
+
+В РАЗРАБОТКЕ:
+1. Модель User
+2. Создание суперюзера
+3. Пересборка бота, настроить права доступа
+4. Админпанель
