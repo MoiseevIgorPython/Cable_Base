@@ -1,12 +1,13 @@
 import os
 
-from core.db import AsyncSessionLocal
 from dotenv import load_dotenv
 from fastapi_users.password import PasswordHelper
-from models import User
 from sqladmin.authentication import AuthenticationBackend
 from sqlalchemy import and_, select
 from starlette.requests import Request
+
+from core.db import AsyncSessionLocal
+from models import User
 
 load_dotenv("../.env")
 
@@ -60,4 +61,4 @@ class AdminAuth(AuthenticationBackend):
         return True
 
 
-authentication_backend = AdminAuth(secret_key="SECRET")
+authentication_backend = AdminAuth(secret_key=os.environ.get("ADMIN_AUTH_BACKEND_SECRET"))

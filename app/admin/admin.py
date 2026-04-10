@@ -1,8 +1,9 @@
-from models import (Alumoflex, Cable, Color, Construction, Drennage, Marker,
-                    Metall, Plastic, Twisting, User)
 from sqladmin import ModelView
 from sqladmin.filters import (AllUniqueStringValuesFilter, BooleanFilter,
                               ForeignKeyFilter, OperationColumnFilter)
+
+from models import (Alumoflex, Cable, Color, Construction, Drennage, Marker,
+                    Metall, Plastic, Twisting, User)
 
 
 class UserAdmin(ModelView, model=User):

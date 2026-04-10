@@ -1,11 +1,12 @@
 from typing import Optional
 
-from core.db import Base
 from sqlalchemy import (BigInteger, CheckConstraint, Computed, Float,
                         ForeignKey, Integer, String, UniqueConstraint, cast,
                         event, func, select)
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
+
+from core.db import Base
 
 from .components import Alumoflex, Color, Drennage, Marker, Plastic
 
@@ -164,8 +165,7 @@ def create_fields_cable(mapper, connection, target):
     construction = construction.scalar_one_or_none()
     inner_diametr = (twist.diametr_twist + construction.radial_isolate * 2) * 2
     outer_diametr = inner_diametr + construction.radial_shell * 2
-    title = f"{construction.name} {twist.count_wires}x"
-    f"{twist.diametr_wires} {twist.metall.name}"
+    title = f"{construction.name} {twist.count_wires}x{twist.diametr_wires} {twist.metall.name}"
     target.inner_diametr = round(inner_diametr, 2)
     target.outer_diametr = round(outer_diametr, 2)
     target.title = title
@@ -186,8 +186,7 @@ def receive_after_update(mapper, connection, target):
         inner_diametr = (twist.diametr_twist + float(target.radial_isolate) * 2) * 2
         outer_diametr = inner_diametr + float(target.radial_shell) * 2
 
-        cable.title = f"{target.name} {twist.count_wires}x"
-        f"{twist.diametr_wires} {twist.metall.name}"
+        cable.title = f"{target.name} {twist.count_wires}x{twist.diametr_wires} {twist.metall.name}"
         cable.inner_diametr = round(inner_diametr, 2)
         cable.outer_diametr = round(outer_diametr, 2)
         session.commit()

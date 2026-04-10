@@ -1,14 +1,15 @@
 from typing import Optional
 
+from fastapi import APIRouter, Depends
+from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from api.dependencies import current_superuser, current_user
 from core.db import get_async_session
 from crud.crud_cable import twisting_crud
-from fastapi import APIRouter, Depends
 from models import Twisting
 from models.users import User
-from pydantic import BaseModel
 from schemas.twist_schema import TwistCreate, TwistDB
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..validators import object_by_data_exist, object_by_id_not_found
 

@@ -3,9 +3,19 @@ from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 start_kdbs = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text='Изоляцию'),
-            KeyboardButton(text='Оболочку'),
-            KeyboardButton(text='Скрутку')
+            KeyboardButton(text='Изоляцию/Оболочку'),
+            KeyboardButton(text='Скрутку'),
+            KeyboardButton(text='Ввод артикула')
+        ],
+    ],
+    resize_keyboard=True,
+    input_field_placeholder='Текст в строке ввода.'
+)
+
+restart_kbds = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text='Сначала')
         ],
     ],
     resize_keyboard=True,

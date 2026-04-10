@@ -18,8 +18,7 @@ class Settings(BaseSettings):
     def async_database_url(self) -> str:
         """Get async database URL."""
         user_pass = f'{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}'
-        host_db = f'{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/'
-        f'{self.POSTGRES_NAME}'
+        host_db = f'{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_NAME}'
         return f'postgresql+asyncpg://{user_pass}@{host_db}'
 
 

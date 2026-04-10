@@ -10,19 +10,25 @@ from aiogram.types import (BotCommandScopeAllGroupChats,
                            BotCommandScopeAllPrivateChats)
 from dotenv import load_dotenv
 
-load_dotenv('../.env')
+load_dotenv('.env')
 
-from common.bot_cmds import BOT_CMDS_GROUP, BOT_CMDS_PRIVATE
-from handlers.group_router import group_router
-from handlers.private_router import private_router
+from common.bot_cmds import BOT_CMDS_GROUP, BOT_CMDS_PRIVATE # noqa
+from handlers import auth, cable, common, twist, work # noqa
 
 TOKEN = os.getenv("BOT_TOKEN")
 
 
 async def main() -> None:
-    bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    bot = Bot(token=TOKEN,
+              default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher()
-    dp.include_routers(private_router, group_router)
+    # dp.include_routers(private_router)
+
+    dp.include_router(auth.router)
+    dp.include_router(common.router)
+    dp.include_router(cable.router)
+    dp.include_router(twist.router)
+    dp.include_router(work.router)
 
     await bot.set_my_commands(commands=BOT_CMDS_PRIVATE,
                               scope=BotCommandScopeAllPrivateChats())
@@ -34,4 +40,3 @@ async def main() -> None:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     asyncio.run(main())
-

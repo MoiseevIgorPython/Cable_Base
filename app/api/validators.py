@@ -1,9 +1,10 @@
 from http import HTTPStatus
 
 from fastapi import HTTPException
-from schemas.construction_schema import ConstructionCreate
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from schemas.construction_schema import ConstructionCreate
 
 
 async def objects_not_found(model,

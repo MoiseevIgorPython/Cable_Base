@@ -1,12 +1,13 @@
 import uvicorn
+from fastapi import FastAPI
+from sqladmin import Admin
+
 from admin.admin import (AlumoflexAdmin, CableAdmin, ColorAdmin,
                          ConstructionAdmin, DrennageAdmin, MarkerAdmin,
                          MetallAdmin, PlasticAdmin, TwistingAdmin, UserAdmin)
 from admin.admin_auth import authentication_backend
 from api.routers import main_router
 from core.db import engine
-from fastapi import FastAPI
-from sqladmin import Admin
 
 app = FastAPI(docs_url='/swagger')
 admin = Admin(app,
