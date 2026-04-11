@@ -1,15 +1,32 @@
-import uvicorn
-from fastapi import FastAPI
-from sqladmin import Admin
+from contextlib import asynccontextmanager
 
+import uvicorn
 from admin.admin import (AlumoflexAdmin, CableAdmin, ColorAdmin,
                          ConstructionAdmin, DrennageAdmin, MarkerAdmin,
                          MetallAdmin, PlasticAdmin, TwistingAdmin, UserAdmin)
 from admin.admin_auth import authentication_backend
 from api.routers import main_router
 from core.db import engine
+from fastapi import FastAPI
+from scripts.user_utils import create_superuser
+from sqladmin import Admin
 
-app = FastAPI(docs_url='/swagger')
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Действия при запуске и остановке приложения."""
+    print("Starting up...")
+    try:
+        await create_superuser(email="admin@admin.ru",
+                               password="admin123")
+        print("✅ Superuser created successfully!")
+    except Exception as e:
+        print(f"⚠️ Superuser creation error: {e}")
+    yield
+    print("Shutting down...")
+
+
+app = FastAPI(docs_url='/swagger', lifespan=lifespan)
 admin = Admin(app,
               engine,
               authentication_backend=authentication_backend)

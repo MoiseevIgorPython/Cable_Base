@@ -1,11 +1,10 @@
 from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
-from dotenv import load_dotenv
-
 from api.client import get_constructions, get_headers, get_metall
 from common.states import (ArticleState, BaseState, ShellIsolateState,
                            TwistState)
+from dotenv import load_dotenv
 from filters.chat_type_filter import ChatTypeFilter
 from keyboards.reply_kbds import kdbs_from_data, start_kdbs
 
@@ -25,6 +24,7 @@ async def select_work(message: Message, state: FSMContext):
         if data:
             await message.answer('Выберите конструкцию.',
                                  reply_markup=kdbs_from_data(data, 'name'))
+            await message.answer("Vot inline klava", reply_markup=keyboard)
         else:
             await state.set_state(BaseState.choose_work)
             await message.answer("Ошибка получения данных с сервера.")

@@ -2,11 +2,10 @@ from http import HTTPStatus
 from typing import Any, Optional, TypeVar
 
 from fastapi import HTTPException
+from models import Cable, Construction, Metall, Twisting
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.decl_api import DeclarativeMeta
-
-from models import Cable, Construction, Metall, Twisting
 
 from .base_crud import BaseCRUD
 

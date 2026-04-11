@@ -1,15 +1,14 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends
-from pydantic import BaseModel
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from api.dependencies import current_superuser, current_user
 from core.db import get_async_session
 from crud.crud_cable import cable_crud
+from fastapi import APIRouter, Depends
 from models import Cable
 from models.users import User
+from pydantic import BaseModel
 from schemas.cable_schema import CableCreate, CableDB
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..validators import object_by_data_exist, object_by_id_not_found
 

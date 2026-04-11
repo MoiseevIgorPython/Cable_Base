@@ -95,6 +95,7 @@ cp .env.example .env
 alembic revision --autogenerate -m "message" # создание нового сценария
 alembic upgrade head # применение миграций
 ```
+
 Загрузить компоненты в БД:
 
 ```bash
@@ -133,6 +134,12 @@ docker-compose up -d
 
     Swagger UI: http://localhost:8000/swagger/
 
+# Возможные проблемы:
+При создании нового сценария миграций, необходимо вручную удалить строку создания Enum типов в БД:
+```
+sa.Enum('CABLE', 'TWIST', name='department').create(op.get_bind()) - удалить в функции upgrade
+```
+Без этого могут не выполниться миграции при развертывании через docker compose
 
 Запуск бота:
 
@@ -146,4 +153,4 @@ python bot/bot.py
 Админ-панель:
 
 - Доступна по адресу localhost:8000/admin
-- Доступ только у superuser (механиз создания суперюзера в разработке, необходимо создать вручную)
+- Доступ только у superuser (суперюзер создается при первом запуске)

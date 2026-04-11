@@ -4,10 +4,9 @@ import aiohttp
 from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
-from dotenv import load_dotenv
-
 from api.client import get_headers
 from common.states import ArticleState, BaseState, ShellIsolateState
+from dotenv import load_dotenv
 from filters.chat_type_filter import ChatTypeFilter
 from keyboards.reply_kbds import kdbs_from_data, restart_kbds, start_kdbs
 

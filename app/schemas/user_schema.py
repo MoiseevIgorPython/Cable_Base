@@ -1,7 +1,6 @@
 from typing import Optional
 
 from fastapi_users import schemas
-
 from models.users import Department, UserRole
 
 

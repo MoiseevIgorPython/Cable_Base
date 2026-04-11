@@ -1,9 +1,8 @@
-from fastapi import Depends
-from fastapi_users import FastAPIUsers
-
 from core.auth.backend import auth_backend
 from core.auth.db import get_user_db
 from core.auth.manager import UserManager
+from fastapi import Depends
+from fastapi_users import FastAPIUsers
 from models.users import User
 
 

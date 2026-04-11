@@ -2,7 +2,6 @@ from aiogram import Router
 from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
-
 from common.states import AuthState, BaseState
 from filters.chat_type_filter import ChatTypeFilter
 from keyboards.reply_kbds import start_kdbs
@@ -29,11 +28,11 @@ async def command_start(message: Message, state: FSMContext) -> None:
     await message.answer("Введите почту.")
 
 
-@router.message(lambda message: message.text == "Сначала")  # описать проверку действительности токена
+@router.message(lambda message: message.text == "Сначала")
 async def restart_cmd(message: Message, state: FSMContext):
     user_data = await state.get_data()
     access_token = user_data.get("access_token")
-    username = user_data.get("username")
+    username = user_data.get("username")  # описать проверку действительности токена (запрос к api/users/me)
     await state.clear()
     if access_token:
         await state.update_data(

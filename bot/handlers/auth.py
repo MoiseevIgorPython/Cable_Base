@@ -1,10 +1,9 @@
 from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
-from dotenv import load_dotenv
-
 from api.client import auth_func
 from common.states import AuthState, BaseState
+from dotenv import load_dotenv
 from filters.chat_type_filter import ChatTypeFilter
 from keyboards.reply_kbds import start_kdbs
 

@@ -1,12 +1,11 @@
 from typing import Optional
 
+from core.db import Base
 from sqlalchemy import (BigInteger, CheckConstraint, Computed, Float,
                         ForeignKey, Integer, String, UniqueConstraint, cast,
                         event, func, select)
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
-
-from core.db import Base
 
 from .components import Alumoflex, Color, Drennage, Marker, Plastic
 

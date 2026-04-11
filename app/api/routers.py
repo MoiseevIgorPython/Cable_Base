@@ -1,7 +1,6 @@
-from fastapi import APIRouter
-
 from api import (auth_router, cable_router, components_router,
                  construction_router, twist_router, user_router)
+from fastapi import APIRouter
 
 main_router = APIRouter(prefix="/api")
 

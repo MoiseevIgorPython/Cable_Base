@@ -12,8 +12,8 @@ from dotenv import load_dotenv
 
 load_dotenv('.env')
 
-from common.bot_cmds import BOT_CMDS_GROUP, BOT_CMDS_PRIVATE # noqa
-from handlers import auth, cable, common, twist, work # noqa
+from common.bot_cmds import BOT_CMDS_GROUP, BOT_CMDS_PRIVATE  # noqa
+from handlers import auth, cable, common, twist, work  # noqa
 
 TOKEN = os.getenv("BOT_TOKEN")
 
