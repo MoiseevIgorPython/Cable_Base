@@ -14,6 +14,7 @@ load_dotenv('.env')
 
 from common.bot_cmds import BOT_CMDS_GROUP, BOT_CMDS_PRIVATE  # noqa
 from handlers import auth, cable, common, twist, work  # noqa
+from api.client import close_session
 
 TOKEN = os.getenv("BOT_TOKEN")
 
@@ -34,7 +35,10 @@ async def main() -> None:
                               scope=BotCommandScopeAllPrivateChats())
     await bot.set_my_commands(commands=BOT_CMDS_GROUP,
                               scope=BotCommandScopeAllGroupChats())
-    await dp.start_polling(bot)
+    try:
+        await dp.start_polling(bot)
+    finally:
+        await close_session()
 
 
 if __name__ == "__main__":

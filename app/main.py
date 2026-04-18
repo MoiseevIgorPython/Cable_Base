@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 
 import uvicorn
@@ -11,19 +12,23 @@ from fastapi import FastAPI
 from scripts.user_utils import create_superuser
 from sqladmin import Admin
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Действия при запуске и остановке приложения."""
-    print("Starting up...")
+    logger.info("Starting up...")
     try:
-        await create_superuser(email="admin@admin.ru",
-                               password="admin123")
-        print("✅ Superuser created successfully!")
+        from core.config import settings
+        await create_superuser(email=settings.FIRST_SUPERUSER_EMAIL,
+                               password=settings.FIRST_SUPERUSER_PASSWORD)
+        logger.info("✅ Superuser created successfully!")
     except Exception as e:
-        print(f"⚠️ Superuser creation error: {e}")
+        logger.error(f"⚠️ Superuser creation error: {e}")
     yield
-    print("Shutting down...")
+    logger.info("Shutting down...")
 
 
 app = FastAPI(docs_url='/swagger', lifespan=lifespan)

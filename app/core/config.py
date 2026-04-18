@@ -9,6 +9,9 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str
     POSTGRES_PORT: int
     POSTGRES_NAME: str
+    FIRST_SUPERUSER_EMAIL: str = "admin@admin.ru"
+    FIRST_SUPERUSER_PASSWORD: str = "admin123"
+    DB_ECHO: bool = False
 
     model_config = ConfigDict(
         env_file='../.env',

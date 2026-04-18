@@ -31,10 +31,10 @@ async def object_by_id_not_found(model,
 
 
 async def object_by_data_exist(model,
-                               obj_in: ConstructionCreate,
+                               obj_in,
                                session: AsyncSession):
     """Проверка существует ли объект с такими же данными."""
-    obj_in_data = obj_in.dict(exclude_unset=True)
+    obj_in_data = obj_in.model_dump(exclude_unset=True)
     conditions = []
     for field, value in obj_in_data.items():
         if hasattr(model, field):
