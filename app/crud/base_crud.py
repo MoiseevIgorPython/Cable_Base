@@ -41,7 +41,7 @@ class BaseCRUD:
     async def create(self,
                      obj_in: SchemaType,
                      session: AsyncSession):
-        obj_in_data = obj_in.dict()
+        obj_in_data = obj_in.model_dump()
         new_obj = self.model(**obj_in_data)
         session.add(new_obj)
         await session.commit()

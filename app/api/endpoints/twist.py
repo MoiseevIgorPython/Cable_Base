@@ -30,7 +30,7 @@ async def get_twist(skip: int = 0,
                     session: AsyncSession = Depends(get_async_session),
                     user: User = Depends(current_user)
                     ):
-    filter_dict = filters.dict(exclude_unset=True, exclude_none=True)
+    filter_dict = filters.model_dump(exclude_unset=True, exclude_none=True)
     twistes = await twisting_crud.get_multi(session,
                                             skip=skip,
                                             limit=limit,

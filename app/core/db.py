@@ -24,11 +24,7 @@ class ComponentName:
 
 
 Base = declarative_base(cls=PreBase)
-
-
-engine = create_async_engine(settings.async_database_url, echo=True)
-async_session = AsyncSession(engine)
-
+engine = create_async_engine(settings.async_database_url, echo=settings.DB_ECHO)
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession)
 
 

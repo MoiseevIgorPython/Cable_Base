@@ -63,5 +63,5 @@ async def update_construction(id: int,
                                   get_async_session),
                               user: User = Depends(current_superuser)):
     construction = await object_by_id_not_found(Construction, id, session)
-    obj_in_data = obj_in.dict(exclude_unset=True, exclude_none=True)
+    obj_in_data = obj_in.model_dump(exclude_unset=True, exclude_none=True)
     return await construction_crud.update(construction, obj_in_data, session)
